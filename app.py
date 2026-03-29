@@ -218,6 +218,44 @@ def render_sidebar():
         
         st.markdown('</div>', unsafe_allow_html=True)
         
+        # ==============================================================
+        # Verifiers Section
+        # ==============================================================
+        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+        st.markdown('<h3>Verifiers</h3>', unsafe_allow_html=True)
+        
+        if st.button("Independent Set",
+                 use_container_width=True,
+                 key="btn_independent_set"):
+            st.session_state.current_algorithm = "independent_set"
+            st.rerun()
+
+        if st.button("Satisfiability (SAT)",
+                 use_container_width=True,
+                 key="btn_satisfiability"):
+            st.session_state.current_algorithm = "satisfiability"
+            st.rerun()
+
+        if st.button("Hamiltonian Cycle",
+                 use_container_width=True,
+                 key="btn_hamiltonian"):
+            st.session_state.current_algorithm = "hamiltonian_cycle"
+            st.rerun()
+
+        if st.button("Element Uniqueness (Closest Pair)",
+                 use_container_width=True,
+                 key="btn_element_uniqueness"):
+            st.session_state.current_algorithm = "element_uniqueness"
+            st.rerun()
+
+        if st.button("8-Queens (Backtracking)",
+                 use_container_width=True,
+                 key="btn_eight_queens"):
+            st.session_state.current_algorithm = "eight_queens"
+            st.rerun()
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+        
         # Current status
         if st.session_state.get('current_algorithm'):
             st.markdown("---")
@@ -321,6 +359,41 @@ def main():
             st.error("Error: Vertex Cover module not found")
             st.code(str(e))
             
+    elif st.session_state.current_algorithm == "independent_set":
+        try:
+            from algorithms.verifiers_ui.independent_set import render_independent_set
+            render_independent_set()
+        except ImportError as e:
+            st.error("Error: Independent Set module not found"); st.code(str(e))
+
+    elif st.session_state.current_algorithm == "satisfiability":
+        try:
+            from algorithms.verifiers_ui.satisfiability import render_satisfiability
+            render_satisfiability()
+        except ImportError as e:
+            st.error("Error: SAT module not found"); st.code(str(e))
+
+    elif st.session_state.current_algorithm == "hamiltonian_cycle":
+        try:
+            from algorithms.verifiers_ui.hamiltonian_cycle import render_hamiltonian_cycle
+            render_hamiltonian_cycle()
+        except ImportError as e:
+            st.error("Error: Hamiltonian Cycle module not found"); st.code(str(e))
+
+    elif st.session_state.current_algorithm == "element_uniqueness":
+        try:
+            from algorithms.verifiers_ui.element_uniqueness import render_element_uniqueness
+            render_element_uniqueness()
+        except ImportError as e:
+            st.error("Error: Element Uniqueness module not found"); st.code(str(e))
+
+    elif st.session_state.current_algorithm == "eight_queens":
+        try:
+            from algorithms.verifiers_ui.eight_queens import render_eight_queens
+            render_eight_queens()
+        except ImportError as e:
+            st.error("Error: 8-Queens module not found"); st.code(str(e))
+
     else:
         # Show empty state
         render_empty_state()
