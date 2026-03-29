@@ -94,7 +94,7 @@ def render_introduction_tab():
         
         st.success("""
         **Features:**
-        - 3 input methods
+        - 2 input methods
         - Step-by-step viz
         - Auto-play mode
         - Min-cut display
@@ -108,19 +108,15 @@ def render_introduction_tab():
 def render_create_graph_tab():
     """Render graph creation with horizontal sub-tabs"""
     
-    subtab1, subtab2, subtab3 = st.tabs([
-        "📚 Load Example",
-        "🎨 Visual Editor",
-        "🎯 Build from Scratch"
+    subtab1, subtab2 = st.tabs([
+        "Load Example",
+        "Build from Scratch"
     ])
     
     with subtab1:
         render_load_example_compact()
     
     with subtab2:
-        render_visual_editor_compact()
-    
-    with subtab3:
         render_build_scratch_compact()
 
 
@@ -147,7 +143,7 @@ def render_load_example_compact():
         if example_data.get('expected_max_flow'):
             st.markdown(f"- **Expected Max Flow:** {example_data['expected_max_flow']}")
         
-        if st.button("📥 Load This Graph", type="primary", use_container_width=True, key="load_example"):
+        if st.button("📂 Load This Graph", type="primary", use_container_width=True, key="load_example"):
             is_valid, message = GraphValidator.validate(example_data)
             if not is_valid:
                 st.error(message)
@@ -160,7 +156,7 @@ def render_load_example_compact():
             st.session_state.ff_sink = example_data['sink']
             st.session_state.ff_graph_built = True
             st.session_state.ff_steps_history = []
-            st.success("✅ Graph loaded! Go to 'Run Algorithm' tab.")
+            st.success("Graph loaded! Go to 'Run Algorithm' tab.")
             st.rerun()
     
     with col2:
@@ -255,7 +251,7 @@ def render_visual_editor_compact():
     with col1:
         selected = st.selectbox("Choose graph to edit:", example_names, key="edit_selector")
     with col2:
-        if st.button("📥 Load", type="primary", use_container_width=True):
+        if st.button("📂 Load", type="primary", use_container_width=True):
             example_data = examples[selected]
             st.session_state.ff_edit_nodes = example_data['nodes'].copy()
             st.session_state.ff_edit_edges = []
@@ -266,11 +262,11 @@ def render_visual_editor_compact():
                     st.session_state.ff_edit_edges.append([edge[0], edge[1], edge[2], edge[3]])
             st.session_state.ff_edit_source = example_data['source']
             st.session_state.ff_edit_sink = example_data['sink']
-            st.success("✅ Loaded!")
+            st.success("Loaded!")
             st.rerun()
     
     if 'ff_edit_edges' not in st.session_state:
-        st.info("👆 Load an example to start editing")
+        st.info("Load an example to start editing")
         return
     
     # Graph preview
@@ -340,7 +336,7 @@ def render_visual_editor_compact():
         with col3:
             st.text("(flow = 0)")
         with col4:
-            if st.button("🗑️", key=f"del_edit_{idx}"):
+            if st.button("🗑️ Delete", key=f"del_edit_{idx}"):
                 st.session_state.ff_edit_edges.pop(idx)
                 st.rerun()
     
@@ -353,7 +349,7 @@ def render_visual_editor_compact():
     with col3:
         new_cap = st.number_input("Capacity", min_value=1, value=10, key="edit_cap")
     with col4:
-        if st.button("➕"):
+        if st.button("+"):
             if new_from != new_to:
                 exists = any((e[0] == new_from and e[1] == new_to) for e in st.session_state.ff_edit_edges)
                 if not exists:
@@ -376,7 +372,7 @@ def render_visual_editor_compact():
             st.session_state.ff_sink = st.session_state.ff_edit_sink
             st.session_state.ff_graph_built = True
             st.session_state.ff_steps_history = []
-            st.success("✅ Graph ready! Go to 'Run Algorithm' tab.")
+            st.success("Graph ready! Go to 'Run Algorithm' tab.")
             st.rerun()
         else:
             st.error(message)
@@ -421,7 +417,7 @@ def render_build_scratch_compact():
         st.markdown("**Nodes** " + f"({len(st.session_state.scratch_nodes)}/10)")
         col_add, col_del = st.columns(2)
         with col_add:
-            if st.button("➕", use_container_width=True, key="add_node_btn",
+            if st.button("+", use_container_width=True, key="add_node_btn",
                         disabled=(len(st.session_state.scratch_nodes) >= 10)):
                 for letter in 'abcdefgh':
                     if letter not in st.session_state.scratch_nodes:
@@ -429,7 +425,7 @@ def render_build_scratch_compact():
                         break
                 st.rerun()
         with col_del:
-            if st.button("➖", use_container_width=True, key="del_node_btn",
+            if st.button("-", use_container_width=True, key="del_node_btn",
                         disabled=(len(st.session_state.scratch_nodes) <= 2)):
                 for node in reversed(st.session_state.scratch_nodes):
                     if node not in ['s', 't']:
@@ -446,7 +442,7 @@ def render_build_scratch_compact():
                 st.rerun()
         
         # Show nodes inline
-        nodes_str = " ".join([f"🟢{n}" if n == 's' else f"🔴{n}" if n == 't' else n 
+        nodes_str = " ".join([f"{n}" if n == 's' else f"{n}" if n == 't' else n 
                              for n in st.session_state.scratch_nodes])
         st.caption(nodes_str)
         
@@ -458,7 +454,7 @@ def render_build_scratch_compact():
         v = st.selectbox("To", st.session_state.scratch_nodes, key="scratch_to", label_visibility="collapsed")
         cap = st.number_input("Cap", min_value=1, step=1, value=10, key="scratch_cap", label_visibility="collapsed")
         
-        if st.button("➕ Add Edge", key="scratch_add_edge", use_container_width=True):
+        if st.button("Add Edge", key="scratch_add_edge", use_container_width=True):
             if u == v:
                 st.error("No self-loops")
             elif v == "s":
@@ -478,14 +474,14 @@ def render_build_scratch_compact():
         # Action buttons
         col_undo, col_reset = st.columns(2)
         with col_undo:
-            if st.button("↩", key="scratch_undo", use_container_width=True,
+            if st.button("↩️ Undo", key="scratch_undo", use_container_width=True,
                         disabled=(len(st.session_state.scratch_edge_history) == 0)):
                 last = st.session_state.scratch_edge_history.pop()
                 if last in st.session_state.scratch_edges:
                     st.session_state.scratch_edges.remove(last)
                 st.rerun()
         with col_reset:
-            if st.button("🗑", key="scratch_reset", use_container_width=True):
+            if st.button("🗑️ Reset", key="scratch_reset", use_container_width=True):
                 st.session_state.scratch_nodes = ["s", "t"]
                 st.session_state.scratch_edges = []
                 st.session_state.scratch_edge_history = []
@@ -516,11 +512,11 @@ def render_build_scratch_compact():
         
         # Show next step prompt
         if st.session_state.get('ff_graph_built'):
-            st.success("✅ Graph built! → Go to **'▶️ Run Algorithm'** tab")
+            st.success("Graph built! -> Go to **'Run Algorithm'** tab")
         elif len(st.session_state.scratch_edges) == 0:
-            st.info("💡 Add nodes, then create edges between them")
+            st.info("Add nodes, then create edges between them")
         else:
-            st.info(f"💡 {len(st.session_state.scratch_edges)} edge(s) added. Click **BUILD** when ready")
+            st.info(f"{len(st.session_state.scratch_edges)} edge(s) added. Click **BUILD** when ready")
     
     # ========================================================================
     # RIGHT COLUMN: EDGE LIST
@@ -614,7 +610,7 @@ def render_run_algorithm_tab():
     """Render run algorithm"""
     
     if not st.session_state.get('ff_graph_built'):
-        st.warning("⚠️ Please create a graph first (go to 'Create Graph' tab)")
+        st.warning("Please create a graph first (go to 'Create Graph' tab)")
         return
     
     col1, col2 = st.columns([3, 7])
@@ -651,7 +647,7 @@ def render_run_algorithm_tab():
                 st.session_state.ff_current_step = 0
                 st.rerun()
         else:
-            st.markdown("### Algorithm Complete ✅")
+            st.markdown("### Algorithm Complete")
             final_step = st.session_state.ff_steps_history[-1]
             col_a, col_b, col_c = st.columns(3)
             with col_a:
@@ -660,8 +656,8 @@ def render_run_algorithm_tab():
                 st.metric("Min Cut", final_step.get('cut_value', 0))
             with col_c:
                 st.metric("Steps", len(st.session_state.ff_steps_history))
-            st.success("✅ Maximum flow found! Go to 'Results' tab to explore steps.")
-            if st.button("🔄 Run Again", use_container_width=True):
+            st.success("Maximum flow found! Go to 'Results' tab to explore steps.")
+            if st.button("🔁 Run Again", use_container_width=True):
                 st.session_state.ff_steps_history = []
                 st.rerun()
 
@@ -674,7 +670,7 @@ def render_results_tab():
     """Render results with autoplay"""
     
     if not st.session_state.get('ff_steps_history'):
-        st.warning("⚠️ Please run the algorithm first (go to 'Run Algorithm' tab)")
+        st.warning("Please run the algorithm first (go to 'Run Algorithm' tab)")
         return
     
     total_steps = len(st.session_state.ff_steps_history)
@@ -686,7 +682,7 @@ def render_results_tab():
     col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 1, 1, 1, 1])
     
     with col1:
-        if st.button("🎬 Autoplay", use_container_width=True, type="primary", key="btn_autoplay"):
+        if st.button("▶️ Autoplay", use_container_width=True, type="primary", key="btn_autoplay"):
             st.session_state.ff_trigger_autoplay = True
     with col2:
         if 'autoplay_speed' not in st.session_state:
@@ -694,19 +690,19 @@ def render_results_tab():
         speed = st.select_slider("Speed", options=[0.5, 1.0, 1.5, 2.0], value=st.session_state.autoplay_speed,
                                 format_func=lambda x: f"{x}s", key="autoplay_speed", label_visibility="collapsed")
     with col3:
-        if st.button("⏮️", use_container_width=True, disabled=(st.session_state.ff_current_step == 0)):
+        if st.button("⏮️ First", use_container_width=True, help="Go to the very beginning.", disabled=(st.session_state.ff_current_step == 0)):
             st.session_state.ff_current_step = 0
             st.rerun()
     with col4:
-        if st.button("⬅️", use_container_width=True, disabled=(st.session_state.ff_current_step == 0)):
+        if st.button("⏪ Prev", use_container_width=True, help="Go back one step.", disabled=(st.session_state.ff_current_step == 0)):
             st.session_state.ff_current_step -= 1
             st.rerun()
     with col5:
-        if st.button("➡️", use_container_width=True, disabled=(st.session_state.ff_current_step == total_steps - 1)):
+        if st.button("Next ⏩", use_container_width=True, help="Advance one step.", disabled=(st.session_state.ff_current_step == total_steps - 1)):
             st.session_state.ff_current_step += 1
             st.rerun()
     with col6:
-        if st.button("⏭️", use_container_width=True, disabled=(st.session_state.ff_current_step == total_steps - 1)):
+        if st.button("Last ⏭️", use_container_width=True, help="Skip to the final result.", disabled=(st.session_state.ff_current_step == total_steps - 1)):
             st.session_state.ff_current_step = total_steps - 1
             st.rerun()
     
@@ -744,14 +740,14 @@ def render_results_tab():
                     st.markdown(f"""
                         <div style="background-color: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 4px;
                                     padding: 12px; margin-top: 8px; font-size: 14px; line-height: 1.6;">
-                        <strong>💡 Explanation</strong><br><br>
+                        <strong>Explanation</strong><br><br>
                         {current_step['explanation'].replace(chr(10), '<br>')}
                         </div>
                     """, unsafe_allow_html=True)
             if i < total_steps - 1:
                 time.sleep(speed)
         st.session_state.ff_current_step = total_steps - 1
-        st.success("✅ Autoplay complete!")
+        st.success("Autoplay complete!")
     else:
         current_step = st.session_state.ff_steps_history[st.session_state.ff_current_step]
         col_graph, col_info, col_explanation = st.columns([6, 2, 2])
@@ -773,7 +769,7 @@ def render_results_tab():
                 st.metric("Bottleneck", current_step.get('bottleneck', 0))
             st.metric("Flow", current_step['max_flow'])
         with col_explanation:
-            st.markdown("**💡 Explanation**")
+            st.markdown("**Explanation**")
             st.markdown(f"""
                 <div style="background-color: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 4px;
                             padding: 10px; margin-top: 8px; font-size: 13px; line-height: 1.5; height: 400px; overflow-y: auto;">

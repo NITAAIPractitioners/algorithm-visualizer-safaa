@@ -468,7 +468,7 @@ class FordFulkersonAlgorithm:
                         f"• Cut edges: {cut_edges}\n"
                         f"• Cut capacity: {cut_capacity}\n\n"
                         f"**Verification: {max_flow} = {cut_capacity} "
-                        f"{'✓' if max_flow == cut_capacity else '✗'}**"
+                        f"{'PASS' if max_flow == cut_capacity else 'FAIL'}**"
                     )
                 })
                 break

@@ -98,9 +98,8 @@ body {
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.2s;
-    border: none;
+    border: 2px solid #ccc !important;
     text-align: left;
-    background-color: rgba(255,255,255,0.1);
 }
 
 .stButton > button:hover {
@@ -111,17 +110,24 @@ body {
 
 .stButton > button:active,
 .stButton > button:focus {
-    background-color: rgba(255,255,255,0.25) !important;
     color: white !important;
     font-weight: 600 !important;
-    border-left: 4px solid white !important;
-    box-shadow: 0 4px 12px rgba(255,255,255,0.2) !important;
+    border: 2px solid #667eea !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
 }
 
 .stButton > button:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    background-color: rgba(255,255,255,0.05);
+}
+
+[data-testid="stSidebar"] .stButton > button {
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    color: white !important;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+    background-color: rgba(255,255,255,0.2);
 }
 
 /* Info box */
@@ -168,15 +174,17 @@ def render_sidebar():
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
         st.markdown('<h3>Bin Packing Problem</h3>', unsafe_allow_html=True)
         
-        st.button("First Fit", 
+        if st.button("First Fit", 
                  use_container_width=True,
-                 disabled=True,
-                 key="btn_first_fit")
+                 key="btn_first_fit"):
+            st.session_state.current_algorithm = "first_fit"
+            st.rerun()
         
-        st.button("Best Fit", 
+        if st.button("Best Fit", 
                  use_container_width=True,
-                 disabled=True,
-                 key="btn_best_fit")
+                 key="btn_best_fit"):
+            st.session_state.current_algorithm = "best_fit"
+            st.rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
         
@@ -184,15 +192,17 @@ def render_sidebar():
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
         st.markdown('<h3>Euclidean TSP</h3>', unsafe_allow_html=True)
         
-        st.button("Using MST", 
+        if st.button("Using MST", 
                  use_container_width=True,
-                 disabled=True,
-                 key="btn_tsp_mst")
+                 key="btn_tsp_mst"):
+            st.session_state.current_algorithm = "tsp_mst"
+            st.rerun()
         
-        st.button("MST with Minimum Matching", 
+        if st.button("MST with Minimum Matching", 
                  use_container_width=True,
-                 disabled=True,
-                 key="btn_tsp_matching")
+                 key="btn_tsp_matching"):
+            st.session_state.current_algorithm = "tsp_matching"
+            st.rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
         
@@ -200,10 +210,11 @@ def render_sidebar():
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
         st.markdown('<h3>Graph Problems</h3>', unsafe_allow_html=True)
         
-        st.button("Vertex Cover", 
+        if st.button("Vertex Cover", 
                  use_container_width=True,
-                 disabled=True,
-                 key="btn_vertex_cover")
+                 key="btn_vertex_cover"):
+            st.session_state.current_algorithm = "vertex_cover"
+            st.rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
         
@@ -270,6 +281,46 @@ def main():
             st.error("Full error traceback:")
             st.code(traceback.format_exc())
     
+    elif st.session_state.current_algorithm == "first_fit":
+        try:
+            from algorithms.bin_packing.ui import render_first_fit
+            render_first_fit()
+        except ImportError as e:
+            st.error("Error: Bin packing module not found")
+            st.code(str(e))
+            
+    elif st.session_state.current_algorithm == "best_fit":
+        try:
+            from algorithms.bin_packing.ui import render_best_fit
+            render_best_fit()
+        except ImportError as e:
+            st.error("Error: Bin packing module not found")
+            st.code(str(e))
+            
+    elif st.session_state.current_algorithm == "tsp_mst":
+        try:
+            from algorithms.tsp.ui import render_tsp_mst
+            render_tsp_mst()
+        except ImportError as e:
+            st.error("Error: TSP module not found")
+            st.code(str(e))
+            
+    elif st.session_state.current_algorithm == "tsp_matching":
+        try:
+            from algorithms.tsp.ui import render_tsp_matching
+            render_tsp_matching()
+        except ImportError as e:
+            st.error("Error: TSP module not found")
+            st.code(str(e))
+            
+    elif st.session_state.current_algorithm == "vertex_cover":
+        try:
+            from algorithms.vertex_cover.ui import render_vertex_cover
+            render_vertex_cover()
+        except ImportError as e:
+            st.error("Error: Vertex Cover module not found")
+            st.code(str(e))
+            
     else:
         # Show empty state
         render_empty_state()
