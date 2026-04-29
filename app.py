@@ -130,14 +130,7 @@ body {
     background-color: rgba(255,255,255,0.2);
 }
 
-/* Info box */
-.info-box {
-    background: rgba(255,255,255,0.15);
-    border-left: 4px solid white;
-    padding: 1rem;
-    border-radius: 5px;
-    margin: 1rem 0;
-}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -158,21 +151,30 @@ def render_sidebar():
     with st.sidebar:
         st.markdown('<div class="sidebar-title">Algorithm Visualizer</div>', unsafe_allow_html=True)
         
-        # Network Flow
+        # ==============================================================
+        # Chapter 3: Lower Bounds (FIRST in sidebar)
+        # ==============================================================
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown('<h3>Network Flow</h3>', unsafe_allow_html=True)
+        st.markdown('<h3>Chapter 3: Lower Bounds</h3>', unsafe_allow_html=True)
+        st.markdown("""
+            <div class="info-box" style="font-size: 0.8rem; margin-bottom: 0.8rem;">
+            Techniques for proving that no algorithm can solve a problem 
+            faster than a certain bound. Covers adversary arguments, 
+            reductions, and approximation hardness.
+            </div>
+        """, unsafe_allow_html=True)
         
-        if st.button("Ford-Fulkerson Algorithm", 
-                    use_container_width=True,
-                    key="btn_ford_fulkerson"):
-            st.session_state.current_algorithm = "ford_fulkerson"
+        if st.button("MST with Minimum Matching", 
+                 use_container_width=True,
+                 key="btn_tsp_matching"):
+            st.session_state.current_algorithm = "tsp_matching"
             st.rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # Bin Packing
+        # Bin Packing - Chapter 6
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown('<h3>Bin Packing Problem</h3>', unsafe_allow_html=True)
+        st.markdown('<h3>Chapter 6: Bin Packing</h3>', unsafe_allow_html=True)
         
         if st.button("First Fit", 
                  use_container_width=True,
@@ -188,9 +190,9 @@ def render_sidebar():
         
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # Traveling Salesman
+        # Euclidean TSP - Chapter 6
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown('<h3>Euclidean TSP</h3>', unsafe_allow_html=True)
+        st.markdown('<h3>Chapter 6: Euclidean TSP</h3>', unsafe_allow_html=True)
         
         if st.button("Using MST", 
                  use_container_width=True,
@@ -198,22 +200,28 @@ def render_sidebar():
             st.session_state.current_algorithm = "tsp_mst"
             st.rerun()
         
-        if st.button("MST with Minimum Matching", 
-                 use_container_width=True,
-                 key="btn_tsp_matching"):
-            st.session_state.current_algorithm = "tsp_matching"
-            st.rerun()
-        
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # Vertex Cover
+        # Vertex Cover - Chapter 6
         st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown('<h3>Graph Problems</h3>', unsafe_allow_html=True)
+        st.markdown('<h3>Chapter 6: Vertex Cover</h3>', unsafe_allow_html=True)
         
         if st.button("Vertex Cover", 
                  use_container_width=True,
                  key="btn_vertex_cover"):
             st.session_state.current_algorithm = "vertex_cover"
+            st.rerun()
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Network Flow - Chapter 7
+        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+        st.markdown('<h3>Chapter 7: Network Flow</h3>', unsafe_allow_html=True)
+        
+        if st.button("Ford-Fulkerson Algorithm", 
+                    use_container_width=True,
+                    key="btn_ford_fulkerson"):
+            st.session_state.current_algorithm = "ford_fulkerson"
             st.rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
@@ -259,10 +267,8 @@ def render_sidebar():
         # Current status
         if st.session_state.get('current_algorithm'):
             st.markdown("---")
-            st.markdown('<div class="info-box">', unsafe_allow_html=True)
             algo_name = st.session_state.current_algorithm.replace('_', ' ').title()
             st.markdown(f'<strong>Active:</strong><br>{algo_name}', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
 
 
 def main():
